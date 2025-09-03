@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BWO</title>
+    <link rel="icon" href="logo.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            overflow: hidden;
+            color: #fff;
+        }
+        
+        .container {
+            height: 200vh;
+            position: relative;
+            transition: transform 0.8s ease;
+        }
+        
+        .section {
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            padding: 20px;
+            overflow: hidden;
+        }
+        
+        /* Section 1 with background image */
+        #section1 {
+            background-image: url('f1.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        
+        #section1::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+        }
+        
+        .email-container {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .email-address {
+            font-size: 32px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px 30px;
+            border-radius: 50px;
+            margin-bottom: 15px;
+            display: inline-block;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .email-address:hover {
+            background: rgba(0, 0, 0, 0.9);
+            transform: scale(1.05);
+        }
+        
+        .copy-text {
+            font-size: 30px;
+            color: white;
+            font-weight: bold;
+            opacity: 1;
+        }
+        
+        .donation-text {
+            font-size: 42px;
+            text-align: center;
+            text-shadow: white;
+            z-index: 10;
+            font-weight: 700;
+            max-width: 800px;
+            line-height: 1.3;
+        }
+        
+        /* Section 2 */
+        #section2 {
+            background: black;
+            color: black;
+        }
+        
+        .texts-container {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+        
+        .text-item {
+            font-size: 36px;
+            text-align: center;
+            padding: 20px 40px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .text-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            background: red;
+            color: white;
+            border-radius: 5px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            transform: translateX(150%);
+            transition: transform 0.4s ease;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        @media (max-width: 768px) {
+            .email-address {
+                font-size: 20px;
+                padding: 12px 20px;
+            }
+            
+            .donation-text {
+                font-size: 28px;
+                padding: 0 20px;
+            }
+            
+            .text-item {
+                font-size: 24px;
+                padding: 15px 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Section 1 -->
+        <section id="section1" class="section">
+            <div class="email-container">
+                <div class="email-address" id="emailText">raiaon001@gmail.com</div>
+                <p class="copy-text">Click to copy this email and donate on this Skrill account. Minimum $20 donation is requested considering all transaction and currency exchange fee</p>
+            </div>
+            <h1 class="donation-text">If only 100 people donate $20, it can feed 100 people for 30 days</h1>
+        </section>
+        
+        <!-- Section 2 -->
+        <section id="section2" class="section">
+            <div class="texts-container">
+                <div class="text-item">$7520 collected uptill now</div>
+                <div class="text-item">Biggest donation of $510 received uptill now</div>
+                <div class="text-item">Target is to reach $30k uptill 1st October</div>
+            </div>
+        </section>
+    </div>
+    
+    <div class="notification" id="notification">Email copied</div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const container = document.querySelector('.container');
+            const sections = document.querySelectorAll('.section');
+            const emailText = document.getElementById('emailText');
+            const notification = document.getElementById('notification');
+            
+            let currentSection = 0;
+            const totalSections = sections.length;
+            let isScrolling = false;
+            let scrollTimeout;
+            
+            // Email copy functionality
+            emailText.addEventListener('click', function() {
+                const tempTextArea = document.createElement('textarea');
+                tempTextArea.value = 'raiaon001@gmail.com';
+                document.body.appendChild(tempTextArea);
+                tempTextArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(tempTextArea);
+                
+                // Show notification
+                notification.classList.add('show');
+                
+                // Hide notification after 3 seconds
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
+            });
+            
+            // Function to scroll to a specific section
+            function scrollToSection(sectionIndex) {
+                if (sectionIndex < 0 || sectionIndex >= totalSections || isScrolling) return;
+                
+                isScrolling = true;
+                currentSection = sectionIndex;
+                
+                // Move the container
+                container.style.transform = `translateY(-${currentSection * 100}vh)`;
+                
+                // Enable scrolling again after transition
+                setTimeout(() => {
+                    isScrolling = false;
+                }, 800);
+            }
+            
+            // Mouse wheel event with debouncing
+            window.addEventListener('wheel', function(e) {
+                // Clear the timeout if it exists
+                clearTimeout(scrollTimeout);
+                
+                // Set a timeout to handle the scroll event
+                scrollTimeout = setTimeout(function() {
+                    if (isScrolling) return;
+                    
+                    if (e.deltaY > 0) {
+                        // Scroll down
+                        scrollToSection(currentSection + 1);
+                    } else {
+                        // Scroll up
+                        scrollToSection(currentSection - 1);
+                    }
+                }, 100); // Adjust this value to control the debounce time
+            });
+            
+            // Touch events for mobile
+            let touchStartY = 0;
+            
+            window.addEventListener('touchstart', function(e) {
+                touchStartY = e.touches[0].clientY;
+            });
+            
+            window.addEventListener('touchend', function(e) {
+                if (isScrolling) return;
+                
+                const touchEndY = e.changedTouches[0].clientY;
+                const diffY = touchStartY - touchEndY;
+                
+                // Minimum swipe distance
+                if (Math.abs(diffY) > 50) {
+                    if (diffY > 0) {
+                        // Swipe up
+                        scrollToSection(currentSection + 1);
+                    } else {
+                        // Swipe down
+                        scrollToSection(currentSection - 1);
+                    }
+                }
+            });
+            
+            // Keyboard navigation
+            window.addEventListener('keydown', function(e) {
+                if (e.key === 'ArrowDown') {
+                    scrollToSection(currentSection + 1);
+                    e.preventDefault();
+                } else if (e.key === 'ArrowUp') {
+                    scrollToSection(currentSection - 1);
+                    e.preventDefault();
+                } else if (e.key === 'Home') {
+                    scrollToSection(0);
+                    e.preventDefault();
+                } else if (e.key === 'End') {
+                    scrollToSection(totalSections - 1);
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
